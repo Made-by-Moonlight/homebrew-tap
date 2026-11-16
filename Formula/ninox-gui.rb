@@ -1,7 +1,7 @@
 class NinoxGui < Formula
   desc "Desktop interface for the Ninox coding-agent orchestrator"
   homepage "https://github.com/Made-by-Moonlight/ninox"
-  head "https://github.com/Made-by-Moonlight/ninox.git", branch: "v1"
+  head "https://github.com/Made-by-Moonlight/ninox.git", branch: "main"
   license "MIT"
 
   depends_on "cmake" => :build

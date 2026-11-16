@@ -1,0 +1,53 @@
+name: Update Ninox app cask
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 4 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-cask
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Download latest bundle and write cask
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(gh release list --repo Made-by-Moonlight/ninox --exclude-pre-releases --limit 100 --json tagName,isLatest --jq '.[] | select(.isLatest) | .tagName')
+          [[ "$tag" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]
+          # Earlier releases predate the GUI/TUI split.
+          (( BASH_REMATCH[1] > 0 || BASH_REMATCH[2] >= 37 ))
+          version="${tag#v}"
+          gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern Ninox.app.zip --dir /tmp
+          sha=$(sha256sum /tmp/Ninox.app.zip | cut -d ' ' -f1)
+          mkdir -p Casks
+          {
+            printf 'cask "ninox-app" do\n'
+            printf '  version "%s"\n' "$version"
+            printf '  sha256 "%s"\n\n' "$sha"
+            printf '  url "https://github.com/Made-by-Moonlight/ninox/releases/download/v#{version}/Ninox.app.zip"\n'
+            printf '  name "Ninox"\n'
+            printf '  desc "Desktop interface for the Ninox coding-agent orchestrator"\n'
+            printf '  homepage "https://github.com/Made-by-Moonlight/ninox"\n\n'
+            printf '  app "Ninox.app"\n'
+            printf 'end\n'
+          } > Casks/ninox-app.rb
+      - name: Commit updated cask
+        run: |
+          set -euo pipefail
+          git add Casks/ninox-app.rb
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Update Ninox macOS app cask'
+            git push
+          fi

@@ -1,6 +1,6 @@
 # Ninox Homebrew tap
 
-Install the development version from the Ninox `v1` branch:
+Install the development version from the Ninox `main` branch:
 
 ```sh
 brew install --HEAD made-by-moonlight/tap/ninox-gui
@@ -15,3 +15,7 @@ any formula you did not install), rather than `ninox update`.
 
 See the [Ninox repository](https://github.com/Made-by-Moonlight/ninox) for
 documentation and the Rust toolchain version required by the branch.
+
+The `ninox-app` macOS cask is generated from the latest tagged Ninox release
+after its `Ninox.app.zip` asset is published. It installs the app in
+Applications. The bundle is ad-hoc signed and is not notarized.
