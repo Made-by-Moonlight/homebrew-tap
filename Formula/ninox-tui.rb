@@ -24,6 +24,7 @@ class NinoxTui < Formula
   end
   depends_on "tmux"
 
+
   def fetch
     return unless build.head?
     system "cargo", "build", "--release", "--locked", "-p", "ninox-tui", "--bin", "ninox-tui"
@@ -33,6 +34,7 @@ class NinoxTui < Formula
     bin.install(build.head? ? "target/release/ninox-tui" : "ninox-tui")
     bin.install_symlink bin/"ninox-tui" => "nx"
   end
+
 
   test do
     assert_match "ninox", shell_output("#{bin}/ninox-tui --version")

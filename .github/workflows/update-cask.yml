@@ -30,10 +30,12 @@ jobs:
           gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern Ninox.app.zip --dir /tmp
           gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern "ninox-${version}-x86_64-unknown-linux-gnu.tar.gz" --dir /tmp
           gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern "ninox-${version}-aarch64-apple-darwin.tar.gz" --dir /tmp
+          curl -fsSL "https://raw.githubusercontent.com/Made-by-Moonlight/ninox/${tag}/crates/ninox-gui/assets/icon-1024.png" -o /tmp/ninox-icon.png
           sha=$(sha256sum /tmp/Ninox.app.zip | cut -d ' ' -f1)
           linux_sha=$(sha256sum "/tmp/ninox-${version}-x86_64-unknown-linux-gnu.tar.gz" | cut -d ' ' -f1)
           mac_sha=$(sha256sum "/tmp/ninox-${version}-aarch64-apple-darwin.tar.gz" | cut -d ' ' -f1)
-          python3 scripts/write-formulae.py "$version" "$linux_sha" "$mac_sha"
+          icon_sha=$(sha256sum /tmp/ninox-icon.png | cut -d ' ' -f1)
+          python3 scripts/write-formulae.py "$version" "$linux_sha" "$mac_sha" "$icon_sha"
           mkdir -p Casks
           {
             printf 'cask "ninox-app" do\n'
