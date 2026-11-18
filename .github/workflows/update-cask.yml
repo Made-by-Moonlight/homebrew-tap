@@ -1,4 +1,4 @@
-name: Update Ninox app cask
+name: Update Ninox release packages
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Download latest bundle and write cask
+      - name: Download release assets and write packages
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -28,7 +28,12 @@ jobs:
           (( BASH_REMATCH[1] > 0 || BASH_REMATCH[2] >= 37 ))
           version="${tag#v}"
           gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern Ninox.app.zip --dir /tmp
+          gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern "ninox-${version}-x86_64-unknown-linux-gnu.tar.gz" --dir /tmp
+          gh release download "$tag" --repo Made-by-Moonlight/ninox --pattern "ninox-${version}-aarch64-apple-darwin.tar.gz" --dir /tmp
           sha=$(sha256sum /tmp/Ninox.app.zip | cut -d ' ' -f1)
+          linux_sha=$(sha256sum "/tmp/ninox-${version}-x86_64-unknown-linux-gnu.tar.gz" | cut -d ' ' -f1)
+          mac_sha=$(sha256sum "/tmp/ninox-${version}-aarch64-apple-darwin.tar.gz" | cut -d ' ' -f1)
+          python3 scripts/write-formulae.py "$version" "$linux_sha" "$mac_sha"
           mkdir -p Casks
           {
             printf 'cask "ninox-app" do\n'
@@ -41,10 +46,10 @@ jobs:
             printf '  app "Ninox.app"\n'
             printf 'end\n'
           } > Casks/ninox-app.rb
-      - name: Commit updated cask
+      - name: Commit updated formulae and cask
         run: |
           set -euo pipefail
-          git add Casks/ninox-app.rb
+          git add Casks/ninox-app.rb Formula/ninox-gui.rb Formula/ninox-tui.rb
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
