@@ -1,14 +1,14 @@
 class NinoxGui < Formula
   desc "Desktop interface for the Ninox coding-agent orchestrator"
   homepage "https://github.com/Made-by-Moonlight/ninox"
-  version "1.0.0"
+  version "1.0.1"
   revision 1
   license "MIT"
 
   on_macos do
     depends_on arch: :arm64
     url "https://github.com/Made-by-Moonlight/ninox/releases/download/v#{version}/ninox-#{version}-aarch64-apple-darwin.tar.gz"
-    sha256 "b7e2e8f98783870de83e3ac29ccc0485d2cf126d9100745635a49828cbbd7511"
+    sha256 "b3efb554cd40c3dff21a03f8814dfb16a4701e046932bcf510703fa6af4f39bf"
   end
 
   on_linux do
@@ -16,7 +16,7 @@ class NinoxGui < Formula
     depends_on "libxkbcommon"
     depends_on "wayland"
     url "https://github.com/Made-by-Moonlight/ninox/releases/download/v#{version}/ninox-#{version}-x86_64-unknown-linux-gnu.tar.gz"
-    sha256 "7beb36c65a158bfe157198e7346d87ffd473805ac57416bad9fd8acae0a7d93f"
+    sha256 "df23787aee376e51d3de874a43a87b7ff6eec822ef5b5c46ff97428227bd9430"
   end
 
   head do
@@ -28,7 +28,7 @@ class NinoxGui < Formula
   depends_on "tmux"
 
   resource "icon" do
-    url "https://raw.githubusercontent.com/Made-by-Moonlight/ninox/v1.0.0/crates/ninox-gui/assets/icon-1024.png"
+    url "https://raw.githubusercontent.com/Made-by-Moonlight/ninox/v1.0.1/crates/ninox-gui/assets/icon-1024.png"
     sha256 "882f0ccc5e37338ab23677ffddde01f61562eab4b307952b457e32331acf0fb8"
   end
 
